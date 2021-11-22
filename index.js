@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
-const PORT = process.env.PORT || 3000
-const dateToUnix = require('./src/dateToUnix')
+const PORT = process.env.PORT || 3001
+//const dateToUnix = require('./src/dateToUnix')
 
 app.get('/', (req, res) => {
 	res.send('Hello there\n')
@@ -19,14 +19,12 @@ app.get('/api/:date?', (req, res) => {
 	let date = new Date(reqDate)
 	let ISODate = date.toISOString().split('T')[0]
 
-	if (dateIsValid(date)) {
+	if (date == ISODate) {
 		res.status(200).send({
 			utc: date.toString(),
 			unix: date.getTime()
 		})
 	}
 })
-
-const dateIsValid = (date) => date == ISODate
 
 app.listen(PORT, () => { console.log('Listening on ' + PORT) })
