@@ -2,10 +2,8 @@ const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3001
 
-app.get('/', (req, res) => {
-	res.send('Hello there\n')
-})
-
+app.use(express.json())
+app.get('/', (req, res) => { res.send('Hello there\n') })
 app.get('/api/:date?', dateHandler)
 
 function dateHandler(req, res) {
@@ -15,8 +13,8 @@ function dateHandler(req, res) {
 		let date = param ? new Date(param) : new Date()
 
 		return {
-			utc: date.toString(),
-			unix: date.getTime()
+			unix: date.getTime(),
+			utc: date.toUTCString()
 		}
 	}
 
