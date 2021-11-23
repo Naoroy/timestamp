@@ -1,30 +1,41 @@
 const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3001
-//const dateToUnix = require('./src/dateToUnix')
 
 app.get('/', (req, res) => {
 	res.send('Hello there\n')
 })
 
-app.get('/api/:date?', (req, res) => {
-	const reqDate = req.params.date
+app.get('/api/:date?', dateHandler)
 
-	if (!isNaN(Number(reqDate))) {
-		let date = new Date(Number(reqDate))
+function dateHandler(req, res) {
+	let params = req.params.date
 
-		return res.status(200).send({ utc: date, unix: reqDate })
-	}
+	function getDate(param) {
+		let date = param ? new Date(param) : new Date()
 
-	let date = new Date(reqDate)
-	let ISODate = date.toISOString().split('T')[0]
-
-	if (date == ISODate) {
-		res.status(200).send({
+		return {
 			utc: date.toString(),
 			unix: date.getTime()
-		})
+		}
 	}
-})
+
+	// if no params return date now
+	if (!params) {
+		return res.send(getDate())
+	}
+	// if params is number parse as unix time
+	else if (Number(params) == params) {
+		return res.send(getDate(Number(params)))
+	}
+	// if params is valid date string parse as date
+	else if (new Date(params).toString() != 'Invalid Date') {
+		return res.send(getDate(params))
+	}
+	// else send error
+	else {
+		return res.send({ error: 'Invalid Date' })
+	}
+}
 
 app.listen(PORT, () => { console.log('Listening on ' + PORT) })
