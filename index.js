@@ -4,35 +4,33 @@ const PORT = process.env.PORT || 3001
 
 app.use(express.json())
 app.get('/', (req, res) => { res.send('Hello there\n') })
-app.get('/api/:date?', dateHandler)
+app.get('/api', currentDate)
+app.get('/api/:date?', dateParse)
 
-function dateHandler(req, res) {
+function currentDate() {
+	res.send(getDate())
+}
+
+function dateParse(req, res) {
 	let params = req.params.date
 
-	function getDate(param) {
-		let date = param ? new Date(param) : new Date()
-
-		return {
-			unix: date.getTime(),
-			utc: date.toUTCString()
-		}
+	if (Number(params) == params) {
+		res.send(getDate(Number(params)))
 	}
-
-	// if no params return date now
-	if (!params) {
-		return res.send(getDate())
-	}
-	// if params is number parse as unix time
-	else if (Number(params) == params) {
-		return res.send(getDate(Number(params)))
-	}
-	// if params is valid date string parse as date
 	else if (new Date(params).toString() != 'Invalid Date') {
-		return res.send(getDate(params))
+		res.send(getDate(params))
 	}
-	// else send error
 	else {
-		return res.send({ error: 'Invalid Date' })
+		res.send({ error: 'Invalid Date' })
+	}
+}
+
+function getDate(param) {
+	let date = param ? new Date(param) : new Date()
+
+	return {
+		unix: date.getTime(),
+		utc: date.toUTCString()
 	}
 }
 
