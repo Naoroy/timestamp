@@ -7,7 +7,7 @@ app.get('/', (req, res) => { res.send('Hello there\n') })
 app.get('/api', currentDate)
 app.get('/api/:date?', dateParse)
 
-function currentDate() {
+function currentDate(req, res) {
 	res.send(getDate())
 }
 
